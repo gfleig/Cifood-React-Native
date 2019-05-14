@@ -5,10 +5,15 @@ Imprementação simplificada do Cifood utilizando React Native. Projeto desenvol
 # Grupo
 
 Caio Eduardo - 11501174
+
 Davysson da Silva - 11500983
+
 Gabriel Fleig - 11501401
+
 Rafael Nunes - 11500947
+
 Valfredo Santos - 11504304
+
 
 ### Observação
 
