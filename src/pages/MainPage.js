@@ -1,39 +1,61 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { View } from "react-native";
+
 //import Header from '../components/header';
-import axios from 'axios';
-import PeopleList from '../components/peoplelist'
+import axios from "axios";
+import ProductList from "../components/productlist";
+import { firestore, firebaseAuth } from '../utils/firebase.js';
 
 export default class MainPage extends React.Component {
-
   constructor(props) {
-    super(props)
-    
+    super(props);
+
     this.state = {
-      people: []
+      people: [],
+      products: [],
     };
+
   }
-  
+
   componentDidMount() {
-    axios
-      .get('https://randomuser.me/api/?nat=br&results=15')
-      .then(response => {        
-        const {results} = response.data;
-        this.setState({people: results })
-        //console.log(this.state.people);
+    try {
+      firebaseAuth.onAuthStateChanged(user => {
+        if (user) {
+          this.props.navigation.navigate('Main');
+        } else {
+          this.props.navigation.navigate('Login');
+        }
       })
+
+      firebaseAuth.signInWithEmailAndPassword(email, password).catch(function (error) {
+        console.log('bad password');
+      });
+    } catch (error) {
+      console.log('error');
+      // Alert.alert(error.toString(error));
+    }
+
+    firestore.collection('products').get().then(querySnapshot => {
+      products_ = [];
+      querySnapshot.forEach(function (doc) {
+        products_.push(doc.data());
+      });
+      this.setState({ products: products_ });
+    });
   }
-   
-  
+
   render() {
     //{this.componentDidMount()}
-    return (      
-      <View>        
-        <PeopleList 
-          peoples = {this.state.people}
-          onPressItem = { pageParams => {
-            this.props.navigation.navigate('Details', pageParams);
-          }} />
+    return (
+      <View>
+        <ProductList
+          products={this.state.products}
+          onPressItem={(products) => {
+            this.props.navigation.navigate('Details', {
+              products
+            });
+          }}
+        />
       </View>
     );
   }
